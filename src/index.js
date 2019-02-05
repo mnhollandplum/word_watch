@@ -15,10 +15,20 @@ $(document).ready(() => {
 //create display variable, pass in json
   const displayWord = (top_word) => {
 //get the word
-    const word = Object.keys(top_word.word)[0];
+  const word = Object.keys(top_word.word)[0];
 // get the count of how many times it was searched
-    const wordCount = Object.values(top_word.word)[0];
-//change the html header to add in the word and count to the end
+  const wordCount = Object.values(top_word.word)[0];
+//append the html header to add in the word and count to the end
     $('.top-word h3').append(`"${word}" = ${wordCount} times`);
   }
+
+  $( "#breakdown-button" ).click(function() {
+    var contents = $('#input').val();
+      fetch('https://wordwatch-api.herokuapp.com/api/v1/words', {
+        method: "POST",
+        headers: {
+           "Content-Type": "application/json; charset=utf-8",
+        },
+        body: JSON.stringify({ word: { value: contents}})
+      })
 })
