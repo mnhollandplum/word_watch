@@ -84,13 +84,49 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()(document).ready(() => {
   // have fun!
 
-  fetch('/api/v1/top_word')
+//get data from api
+  fetch('https://wordwatch-api.herokuapp.com/api/v1/top_word')
+//turn it in to json
   .then(response => response.json())
-  .then(top_word => console.log(top_word))
+//pass json to display variable
+  .then(top_word => displayWord(top_word))
+//error out
   .catch((error) => console.error({ error }))
 
+//create display variable, pass in json
+  const displayWord = (top_word) => {
+//get the word
+  const word = Object.keys(top_word.word)[0];
+// get the count of how many times it was searched
+  const wordCount = Object.values(top_word.word)[0];
+//append the html header to add in the word and count to the end. Empty it out to update when word is added via input
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.top-word h3').empty().append(`Top word from Word Watch API: "${word}" = ${wordCount} times`);
+  }
 
-})
+//target break down button
+__WEBPACK_IMPORTED_MODULE_0_jquery___default()( "#breakdown-button" ).click(function() {
+//assign user input to variable
+    var input = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('#text-input').val();
+//post request
+      fetch('https://wordwatch-api.herokuapp.com/api/v1/words', {
+        method: "POST",
+        headers: {
+           "Content-Type": "application/json; charset=utf-8",
+        },
+        body: JSON.stringify({ word: { value: input}})
+      })
+//fetch the updated api to display updated word count if applicable
+      .then(response => response.json())
+      .then(json => {fetch('https://wordwatch-api.herokuapp.com/api/v1/top_word')
+      .then(response => response.json())
+  //rerun display word
+      .then(top_word => displayWord(top_word))
+      .catch(error => console.log({ error }));
+        })
+      .catch(error => console.log({ error }));
+  });
+
+  })
 
 
 /***/ }),
